@@ -21,7 +21,7 @@ android {
         }
         configureEach {
             // 应用名
-            resValue("string", "MobileGL", "MobileGL Renderer")
+            resValue("string", "app_name", "MobileGL Renderer")
             // 包名后缀
             applicationIdSuffix = ".MobileGL"
 
