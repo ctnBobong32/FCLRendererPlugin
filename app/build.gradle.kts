@@ -20,56 +20,40 @@ android {
             isMinifyEnabled = false
         }
         configureEach {
-            //应用名
-            //app name
-            resValue("string","MobileGL","MobileGL Renderer")
-            //包名后缀
-            //package name Suffix
+            // 应用名
+            resValue("string", "MobileGL", "MobileGL Renderer")
+            // 包名后缀
             applicationIdSuffix = ".MobileGL"
 
-            //渲染器在启动器内显示的名称
-            //The name displayed by the renderer in the launcher
+            // 渲染器在启动器内显示的名称
             manifestPlaceholders["des"] = "MobileGL"
-            //渲染器的具体定义 格式为 名称:渲染器库名:EGL库名 例如 LTW:libltw.so:libltw.so
-            //The specific definition format of a renderer is ${name}:${renderer library name}:${EGL library name}, for example:   LTW:libltw.so:libltw.so
+            // 渲染器定义：名称:渲染库:EGL库
             manifestPlaceholders["renderer"] = "MobileGL:libMobileGL.so:libMobileGL.so"
 
-            //特殊Env
-            //Special Env
-            //DLOPEN=libxxx.so 用于加载额外库文件
-            //DLOPEN=libxxx.so used to load external library
-            //如果有多个库,可以使用","隔开,例如  DLOPEN=libxxx.so,libyyy.so
-            //If there are multiple libraries, you can use "," to separate them, for example  DLOPEN=libxxx.so,libyyy.so
-            DLOPEN=libglslang.so
-            
-            manifestPlaceholders["boatEnv"] = mutableMapOf<String,String>().apply {
-
+            // 特殊环境变量：预加载依赖库
+              // 如果有多个依赖，用逗号分隔，如 "libglslang.so,libother.so"
+            manifestPlaceholders["boatEnv"] = mutableMapOf<String, String>().apply {
+                put("DLOPEN", "libglslang.so")
             }.run {
                 var env = ""
-                forEach { (key, value) ->
-                    env += "$key=$value:"
-                }
+                forEach { (key, value) -> env += "$key=$value:" }
+                env.dropLast(1)  // 移除末尾冒号
+            }
+
+            manifestPlaceholders["pojavEnv"] = mutableMapOf<String, String>().apply {
+                // 可添加其他环境变量，如 put("LD_LIBRARY_PATH", "...")
+            }.run {
+                var env = ""
+                forEach { (key, value) -> env += "$key=$value:" }
                 env.dropLast(1)
             }
 
-            manifestPlaceholders["pojavEnv"] = mutableMapOf<String,String>().apply {
-
-            }.run {
-                var env = ""
-                forEach { (key, value) ->
-                    env += "$key=$value:"
-                }
-                env.dropLast(1)
-            }
-
-            //最小支持的MC版本
-            //The minimum supported MC version
+            // 支持的 Minecraft 版本范围（可选）
             manifestPlaceholders["minMCVer"] = "1.16"
-            //最大支持的MC版本
-            //The maximum supported MC version
             manifestPlaceholders["maxMCVer"] = ""
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
